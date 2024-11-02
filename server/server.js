@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
@@ -11,10 +12,11 @@ const port = 5000;
 
 
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "KabowdGroup7",
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT
 });
 db.connect((err) => {
     if (err) {
@@ -74,22 +76,7 @@ app.post("/adddep", (req, res) => {
     });
   });
 
- /*  app.put("/updatedep", (req, res) => {
-    const { depId, newDepName } = req.body; 
-  
-    const sql = "UPDATE Departments SET department_name = ? WHERE department_id = ?";
-    const values = [newDepName, depId];
-  
-    db.query(sql, values, (err, result) => {
-      if (err) {
-        console.error('Error updating department:', err);
-        res.status(500).send('Error updating department.');
-      } else {
-        console.log(result.affectedRows + " record updated");
-        res.send(result); 
-      }
-    });
-  }); */
+
   app.delete("/deletedep/:depId", (req, res) => {
     const depId = req.params.depId; // Get department ID from URL parameters 
     // SQL query to delete the department
@@ -397,61 +384,6 @@ app.put('/updatesalarie/:id', (req, res) => {
 });
 
 
-
-
-
-// Update salary by ID
-// Update salary by ID with detailed logging
-/* app.put('/updatesalarie/:id', (req, res) => {
-  const { id } = req.params;
-  const { salary_amount } = req.body;
-  if (isNaN(salary_amount) || salary_amount <= 0) {
-    return res.status(400).send('Invalid salary amount');
-  }
-  let taxAmount;
-  if (salary_amount >= 1000 && salary_amount <= 30000) {
-    taxAmount = (salary_amount * 0.10).toFixed(2);
-  } else if (salary_amount > 30000 && salary_amount <= 80000) {
-    taxAmount = (salary_amount * 0.20).toFixed(2);
-  } else if (salary_amount > 80000) {
-    taxAmount = (salary_amount * 0.30).toFixed(2);
-  } else {
-    return res.status(400).send('Invalid salary amount');
-  }
-
-  const sql = `
-    UPDATE Salaries SET 
-      salary_amount = ?, 
-      Tax_Amount = ? 
-    WHERE salary_id = ?`;
-
-  db.query(sql, [salary_amount, taxAmount, id], (err, result) => {
-    if (err) {
-      console.error('Error updating salary:', err); 
-      return res.status(500).send('Error updating salary');
-    }
-
-    console.log('Update result:', result);
-
-    if (result.affectedRows === 0) {
-      return res.status(404).send('Salary not found');
-    }
-
-    res.send('Salary and tax updated successfully');
-  });
-}); */
-
-
-
-
-
-
-
-
-
-
-
-
 app.delete('/deletesalarie/:id', (req, res) => {
   const { id } = req.params;
   
@@ -470,25 +402,8 @@ app.delete('/deletesalarie/:id', (req, res) => {
   });
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+const PORT = process.env.PORT || 5000;
 
   app.listen(port, () => {
-    console.log(`Server is listening on http://localhost:${port}`);
+    console.log(`Server is listening on port ${PORT}`);
   });
